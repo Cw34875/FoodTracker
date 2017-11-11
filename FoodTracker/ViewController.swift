@@ -29,7 +29,25 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
     func textFieldDidEndEditing(_ textField: UITextField){
         mealNameLabel.text = textField.text
     }
-
+    
+    //imagePickerControllerDelegate
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        //dismisses the controller if canceled
+        dismiss(animated: true, completion: nil)
+    }
+    
+    //gets called if the user picks an object
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+        //the info dictionary can contain multiple versions of the image. You want to use the original
+        guard let selectedImage = info[UIImagePickerControllerOriginalImage] as?
+            UIImage else {
+                fatalError("Expected a dictionary containing an image, but was provided the following: \(info)")
+            }
+            //setPhotoImageView to display image
+            photoImageView.image = selectedImage
+            //dismiss the picker
+            dismiss(animated: true, completion: nil)
+    }
     //MARK: Actions
     @IBAction func selectImageFromImageLibrary(_ sender: UITapGestureRecognizer) {
         //Hides the Keyboard
@@ -39,7 +57,12 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
         
         //Only allows photos to be picked, not taken
         imagePickerController.sourceType = .photoLibrary
+        
+        //makes sure the ViewController is notified when the user picks an image
+        imagePickerController.delegate = self
+        present(imagePickerController, animated: true, completion: nil)
     }
+    
 
     @IBAction func setDefaultLabelButton(_ sender: UIButton) {
         mealNameLabel.text = "Default Text"
